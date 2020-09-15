@@ -1,0 +1,46 @@
+version: "3.6"
+services:
+  # Wordpress auto configuration
+  # depends on wp-cli build
+  wp-auto-config:
+    image: wpcli
+    build: ./wpcli/
+    container_name: ${COMPOSE_PROJECT_NAME}-wp-autoconfig
+    entrypoint: sh -c "/wait && make -f /scripts/Makefile"
+    volumes:
+      - ${WORDPRESS_DATA_DIR}:/var/www/html
+      - ${WORDPRESS_THEME_DATA_DIR}:/WordPressThemes
+      - ${WORDPRESS_THEME_PLUGIN_DATA_DIR}:/WordPressThemes/plugins
+    working_dir: /var/www/html
+    depends_on:
+      - wordpress
+      - mariadb
+    environment:
+      # Waiting for Mariadb and wordpress -------------------
+      - WAIT_HOSTS=mariadb:3306,wordpress:80
+      - WAIT_BEFORE_HOSTS=${WAIT_BEFORE_HOSTS:-30}
+      - WAIT_AFTER_HOSTS=${WAIT_AFTER_HOSTS:-15}
+      - WAIT_HOSTS_TIMEOUT=${WAIT_HOSTS_TIMEOUT:-300}
+      - WAIT_SLEEP_INTERVAL=${WAIT_SLEEP_INTERVAL:-30}
+      - WAIT_HOST_CONNECT_TIMEOUT=${WAIT_HOST_CONNECT_TIMEOUT:-30}
+      # Wordpress configuration -----------------------------
+      - WORDPRESS_LOCALE=${WORDPRESS_LOCALE:-en_US}
+      - WORDPRESS_DB_NAME=${DB_NAME}
+      - WORDPRESS_DB_HOST=${COMPOSE_PROJECT_NAME}-mariadb
+      - WORDPRESS_DB_USER=${DB_USER}
+      - WORDPRESS_DB_PASSWORD=${DB_PASSWORD}
+      - WORDPRESS_WEBSITE_TITLE=${WORDPRESS_WEBSITE_TITLE}
+      - WORDPRESS_WEBSITE_URL=${WORDPRESS_WEBSITE_URL}
+      - WORDPRESS_WEBSITE_URL_WITHOUT_HTTP=${WORDPRESS_WEBSITE_URL}
+      - WORDPRESS_WEBSITE_POST_URL_STRUCTURE=${WORDPRESS_WEBSITE_POST_URL_STRUCTURE}
+      - WORDPRESS_ADMIN_USER=${WORDPRESS_ADMIN_USER}
+      - WORDPRESS_ADMIN_PASSWORD=${WORDPRESS_ADMIN_PASSWORD}
+      - WORDPRESS_ADMIN_EMAIL=${WORDPRESS_ADMIN_EMAIL}
+      - WORDRESS_MAIN_THEME=${WORDRESS_MAIN_THEME}
+      - WORDPRESS_DEFAULT_THEMES=${WORDPRESS_DEFAULT_THEMES}
+      - WORDRESS_MAIN_THEME_PLUGINS=${WORDRESS_MAIN_THEME_PLUGINS}
+    networks:
+      - backend
+
+networks:
+  backend:

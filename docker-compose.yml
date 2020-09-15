@@ -1,0 +1,89 @@
+version: "3.6"
+services:
+  wordpress:
+    image: wordpress:${WORDPRESS_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}-wordpress
+    volumes:
+      - ./config/php.conf.ini:/usr/local/etc/php/conf.d/php.ini
+      - ${WORDPRESS_DATA_DIR}:/var/www/html
+      - ${WORDPRESS_THEME_DATA_DIR}:/WordPressThemes
+      - ${WORDPRESS_THEME_PLUGIN_DATA_DIR}:/WordPressThemes/plugins
+    environment:
+      - WORDPRESS_DB_NAME=${DB_NAME}
+      - WORDPRESS_TABLE_PREFIX=${WORDPRESS_TABLE_PREFIX}
+      - WORDPRESS_DB_HOST=${COMPOSE_PROJECT_NAME}-mariadb
+      - WORDPRESS_DB_USER=${DB_USER}
+      - WORDPRESS_DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - mariadb
+      - adminer
+    restart: always
+    ports:
+      - "${WORDPRESS_PORT}:80"
+    networks:
+      - frontend
+      - backend
+
+  mariadb:
+    image: mariadb:${MARIADB_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}-mariadb
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+    ports:
+      - "${MARIADB_PORT}:3306"
+    restart: always
+    networks:
+      - backend
+
+  adminer:
+    image: adminer:${ADMINER_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}-adminer
+    environment:
+      ADMINER_DESIGN: "pepa-linha"
+    ports:
+      - "${ADMINER_PORT}:8080"
+    restart: always
+    depends_on:
+      - mariadb
+    networks:
+      - backend
+
+  # Command line interface to wordpress
+  wpcli:
+    image: wpcli
+    build: ./wpcli/
+    container_name: ${COMPOSE_PROJECT_NAME}-wpcli
+    volumes:
+      - ${WORDPRESS_DATA_DIR}:/var/www/html
+    working_dir: /var/www/html
+    networks:
+      - backend
+
+  # Check availability of essential services
+  healthcheck:
+    image: wpcli
+    build: ./wpcli/
+    container_name: ${COMPOSE_PROJECT_NAME}-healthcheck
+    command: sh -c "/wait"
+    environment:
+      - WAIT_HOSTS=mariadb:3306, wordpress:80
+      - WAIT_BEFORE_HOSTS=${WAIT_BEFORE_HOSTS:-30}
+      - WAIT_AFTER_HOSTS=${WAIT_AFTER_HOSTS:-15}
+      - WAIT_HOSTS_TIMEOUT=${WAIT_HOSTS_TIMEOUT:-300}
+      - WAIT_SLEEP_INTERVAL=${WAIT_SLEEP_INTERVAL:-30}
+      - WAIT_HOST_CONNECT_TIMEOUT=${WAIT_HOST_CONNECT_TIMEOUT:-30}
+    networks:
+      - frontend
+      - backend
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  mysql:
