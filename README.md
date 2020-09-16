@@ -80,7 +80,7 @@ autoinstall: build
 # Clean/Delete all installed wordpress & database setup
 clean: down
 	@echo "💥 Removing related folders/files..."
-	@rm -rf  mysql/* wordpress/*
+	@rm -rf  mysql/* wordpress/* wordpress/.htaccess
 
 # Run wpcli in the terminal
 start-wpcli:
