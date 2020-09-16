@@ -14,11 +14,17 @@ configure:
 	wp option update siteurl "${WORDPRESS_WEBSITE_URL}"
 	wp rewrite structure "${WORDPRESS_WEBSITE_POST_URL_STRUCTURE}"
 	
-	@echo "⚙️ Install main theme, activate it & deactivate default theme..."
-	wp theme install --activate ${WORDRESS_MAIN_THEME}
-
-	@echo "⚙️ Removing Wordpress default themes..."
-	wp theme delete ${WORDPRESS_DEFAULT_THEMES}
+	@echo "⚙️ Install & activate main theme ..."
+	-wp theme install --activate ${WORDRESS_MAIN_THEME}
 
 	@echo "⚙️ Install & activate plugins..."
-	wp plugin install --activate ${WORDRESS_MAIN_THEME_PLUGINS}
+	-wp plugin install --activate ${WORDRESS_MAIN_THEME_PLUGINS}
+
+	@echo "⚙️ Removing Wordpress default themes..."
+	-wp theme delete ${WORDPRESS_DEFAULT_THEMES}
+
+	@echo "⚙️ Removing Wordpress default plugins..."
+	-wp plugin delete ${WORDPRESS_DEFAULT_PLUGINS}
+
+	@echo "⚙️ Removing Wordpress default posts & pages..."
+	-wp post delete --force ${WORDPRESS_DEFAULT_POSTS_PAGES}
