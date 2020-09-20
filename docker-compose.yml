@@ -5,9 +5,9 @@ services:
     container_name: ${COMPOSE_PROJECT_NAME}-wordpress
     volumes:
       - ./config/php.conf.ini:/usr/local/etc/php/conf.d/php.ini
-      - ${WORDPRESS_DATA_DIR}:/var/www/html
-      - ${WORDPRESS_THEME_DATA_DIR}:/WordPressThemes
-      - ${WORDPRESS_THEME_PLUGIN_DATA_DIR}:/WordPressThemes/plugins
+      - ${WORDPRESS_LOCAL_DIR}:${WORDPRESS_CONTAINER_DIR}
+      - ${WORDPRESS_THEME_LOCAL_DIR}:${WORDPRESS_THEME_CONTAINER_ROOT_DIR}
+      - ${WORDPRESS_THEME_PLUGIN_LOCAL_DIR}:${WORDPRESS_THEME_PLUGIN_CONTAINER_ROOT_DIR}
     environment:
       - WORDPRESS_DB_NAME=${DB_NAME}
       - WORDPRESS_TABLE_PREFIX=${WORDPRESS_TABLE_PREFIX}
@@ -59,10 +59,10 @@ services:
     build: ./wpcli/
     container_name: ${COMPOSE_PROJECT_NAME}-wpcli
     volumes:
-      - ${WORDPRESS_DATA_DIR}:/var/www/html
-      - ${WORDPRESS_THEME_DATA_DIR}:/WordPressThemes
-      - ${WORDPRESS_THEME_PLUGIN_DATA_DIR}:/WordPressThemes/plugins
-    working_dir: /var/www/html
+      - ${WORDPRESS_LOCAL_DIR}:${WORDPRESS_CONTAINER_DIR}
+      - ${WORDPRESS_THEME_LOCAL_DIR}:${WORDPRESS_THEME_CONTAINER_ROOT_DIR}
+      - ${WORDPRESS_THEME_PLUGIN_LOCAL_DIR}:${WORDPRESS_THEME_PLUGIN_CONTAINER_ROOT_DIR}
+    working_dir: ${WORDPRESS_CONTAINER_DIR}
     depends_on:
       - wordpress
       - mariadb

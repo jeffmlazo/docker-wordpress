@@ -7,71 +7,140 @@ The installation tool kit, provided here, include:
 
 ### Requirements
 
----
-
-- MinGW = for installing GNU Make in Windows machine
+- Chocolatey - for installing GNU Make in Windows machine
 - Docker
 - GNU Make
 
 ### Installing GNU Make (Windows)
 
----
+1. Open **poweshell.exe** & run as an **administrator**.
 
-1. Goto http://www.mingw.org/ & download the **mingw-get-setup.exe** to install it.
+2. Goto https://chocolatey.org and check the powershell command in **step 2** or just copy & paste the command below.
 
-2. Add the following **Environment Variable** in the **Advanced system settings** or by running it in the command line.
-
-   **(Option #1)** Using the Advanced system settings just add it in the path variable.
-
-   c:\MinGW\bin
-
-   **(Option #2)** Using the command line and make sure you run the cmd as an **Administrator** then close it after you've enter the commands.
-
-   ```cmd
-   setx /M PATH "%PATH%;c:\MinGW\bin"
+   ```powershell
+   Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
    ```
 
-3. Open cmd or terminal & goto **c:\MinGW\bin** directory
+3. Close the poweshell. Open & run it again as an **administrator**.
 
-   ```cmd
-   cd c:\MinGW\bin
+4. Install the **gnu make** by running the command.
+
+   ```powershell
+   choco install make
    ```
 
-4. Install the gnu make by running the command
+5. Done!. You can now use make globally.
 
-   ```cmd
-   mingw-get install mingw32-make
-   ```
+&nbsp;
+&nbsp;
 
-5. Run the command to copy the **mingw32-make.exe** to **make.exe** inside c:\MinGW\bin directory
+### Quick Setup
 
-   **Windows Command**
-
-   ```cmd
-   copy c:\MinGW\bin\mingw32-make.exe c:\MinGW\bin\make.exe
-   ```
-
-   **Cmdr or Bash**
+1. Open terminal or commandline to download the source using git.
 
    ```bash
-   cp mingw32-make.exe make.exe
+   # Download a wordpress docker-compose example
+   git clone https://github.com/jeffmlazo/docker-wordpress
    ```
 
-6. Done!. You can now use make globally.
+2. Change to the directory.
+   ```bash
+   # Change directory
+   cd docker-wordpress
+   ```
+3. Edit the .env file base in you're configuration.
 
-&nbsp;
-&nbsp;
+   > **NOTE:** If you're adding a downloaded **zip file** **theme(s)** or **plugin(s)** for the 1st time of installation in you're local machine. You must manually create a folder that has a name **WordPressThemes** & create another folder inside of it with **plugins** folder in you're home directory and put all you're themes & plugins inside of it. You can modify the default folder names as well if you like.
 
-#### You can automatically deploy a local docker wordpress site in 5 minutes using the following commands:
+   ```bash
+   # 1/ Project name -------------------------------------------------
+   # Must be lower-case, no spaces and no invalid path chars.
+   # Will be used also as the WP database name
+   COMPOSE_PROJECT_NAME=wordpress
 
-```bash
-# Download a wordpress docker-compose example
-git clone https://github.com/jeffmlazo/docker-wordpress
-cd docker-wordpress
-# Build and start installation
-docker-compose up -d --build
+   # 2/ Database user, user password and root password -----------------------------------------
+   # Set non-root database user if wanted (optional)
+   DB_USER=user
+   DB_PASSWORD=password
+   DB_ROOT_PASSWORD=root_password
+   DB_NAME=wordpress_db
 
-```
+   # 3/ For wordpress auto-install and auto-configuration -------------------
+   WORDPRESS_WEBSITE_TITLE="My Personal Blog"
+   WORDPRESS_TABLE_PREFIX="wp_"
+
+   # URL
+   WORDPRESS_WEBSITE_URL="http://localhost"
+   WORDPRESS_WEBSITE_URL_WITHOUT_HTTP=localhost
+   WORDPRESS_WEBSITE_POST_URL_STRUCTURE="/blog/%postname%/"
+
+   # Website admin identification. Specify a strong password
+   WORDPRESS_ADMIN_USER="wordpress"
+   WORDPRESS_ADMIN_PASSWORD="wordpress"
+   WORDPRESS_ADMIN_EMAIL="your-email@example.com"
+
+   # 4/ Software versions -----------------------------------------------
+   WORDPRESS_VERSION="latest"
+   MARIADB_VERSION="latest"
+   PHPMYADMIN_VERSION="latest"
+   ADMINER_VERSION="latest"
+
+   # 5/ Ports: Can be changed -------------------------------------------
+   ADMINER_PORT=8080
+   WORDPRESS_PORT=80
+   MARIADB_PORT=3306
+
+   # 6/ Volumes on host --------------------------------------------------
+   #-------------------- DEFAULT FOLDERS --------------------#
+   WORDPRESS_THEME_FOLDER="WordPressThemes"
+   WORDPRESS_THEME_PLUGIN_FOLDER="plugins"
+
+   #-------------------- WORDPRESS LOCAL, THEME & PLUGIN DIRECTORY --------------------#
+   WORDPRESS_LOCAL_DIR="./wordpress"
+   WORDPRESS_THEME_LOCAL_DIR="~/${WORDPRESS_THEME_FOLDER}"
+   WORDPRESS_THEME_PLUGIN_LOCAL_DIR="~/${WORDPRESS_THEME_FOLDER}/${WORDPRESS_THEME_PLUGIN_FOLDER}"
+
+   #-------------------- CONTAINER ROOT DIRECTORY --------------------#
+   WORDPRESS_CONTAINER_DIR="/var/www/html"
+   WORDPRESS_THEME_CONTAINER_ROOT_DIR="/${WORDPRESS_THEME_FOLDER}"
+   WORDPRESS_THEME_PLUGIN_CONTAINER_ROOT_DIR="/${WORDPRESS_THEME_FOLDER}/${WORDPRESS_THEME_PLUGIN_FOLDER}"
+
+   # 7/ Healthcheck availability of host services (mysql and woordpress server)
+   # Waiting time in second
+   WAIT_BEFORE_HOSTS=5
+   WAIT_AFTER_HOSTS=5
+   WAIT_HOSTS_TIMEOUT=300
+   WAIT_SLEEP_INTERVAL=60
+   WAIT_HOST_CONNECT_TIMEOUT=5
+
+   # 8/ Used only in online deployment --------------------------------------
+   WORDPRESS_WEBSITE_URL_WITHOUT_WWW=example.com
+   WEBSITE_URL_WITHOUT_HTTP=sql.example.com
+
+   # 9/ Wordpress Themes, Plugins, Posts & Pages --------------------------------------
+   # NOTE: Spaces are case sensitive here 1 space needed per theme or plugin for local or repo and .zip extension is needed for local theme & plugins.
+   #-------------------- THEMES & PLUGINS --------------------#
+   WORDPRESS_LOCAL_THEMES="unos.2.7.2.zip"
+   WORDPRESS_REPO_THEMES="sydney calliope newsberg"
+   # WORDPRESS_REPO_THEMES_VERSION="2.7.2 1.0.2 0.7" #TODO: version flag is not yet working
+   WORDPRESS_LOCAL_PLUGINS="all-in-one-wp-migration.6.82.zip all-in-one-wp-migration-file-extension.zip carousel-slider.zip"
+   WORDPRESS_REPO_PLUGINS="contact-form-7"
+
+   #-------------------- DEFAULT THEMES, PLUGINS, POSTS & PAGES --------------------#
+   WORDPRESS_DEFAULT_THEMES="twentytwenty twentynineteen twentyseventeen twentysixteen"
+   WORDPRESS_DEFAULT_PLUGINS="hello akismet"
+   # Hello world! post & Sample & Privacy Policy page
+   WORDPRESS_DEFAULT_POSTS_PAGES="1 2 3"
+   ```
+
+4. Run the make command to build and start the installation.
+
+   ```bash
+   # Build and start installation
+   make autoinstall
+   ```
+
+5. Done!
 
 Visit your site at <http://localhost> and your database via Adminer
 at <http://localhost:8080>.
@@ -88,18 +157,19 @@ Default identification for the phpMyAdmin interface:
 
 ## **Useful set of commands to know**:
 
----
-
 ### Docker-compose
 
 ```bash
 # Stop and remove containers
 docker-compose down
+
 # Build, and start the wordpress website
 docker-compose up -d --build
+
 # Reset everything
 docker-compose down
 rm -rf certs/* certs-data/* logs/nginx/* mysql/* wordpress/*
+
 # Run wpcli as a service in terminal
 docker-compose run --rm wpcli bash
 ```
@@ -142,13 +212,14 @@ clean: down
 	@rm -rf  mysql/* wordpress/* wordpress/.htaccess
 
 # Run wpcli in the terminal
-start-wpcli:
+run-wpcli:
 	docker-compose run --rm wpcli bash
 
 ```
 
 ## References
 
----
-
 - [Github Fork From: KASSAMBARA](https://github.com/kassambara/wordpress-docker-compose)
+- [Docker Official Website](https://www.docker.com)
+- [Docker Compose Documentation](https://docs.docker.com/compose/)
+- [Chocolatey Official Website](https://chocolatey.org/)

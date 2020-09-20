@@ -1,6 +1,3 @@
-# Include the .env local file
-include .env
-
 # Start the wordpress website
 start:
 	docker-compose up -d
@@ -26,9 +23,6 @@ configure:
 
 # Build and start the wordpress website using wpcli configurations
 autoinstall: build
-	@echo "⚙️ Creating Theme & Plugin folders in the host Home directory..."
-	-mkdir ~/${WORDPRESS_THEME_FOLDER} ~/${WORDPRESS_THEME_PLUGIN_FOLDER}
-
 	@echo "⚙️ Installing wordpress using wpcli..."
 	docker-compose -f docker-compose.yml -f wp-auto-config.yml run --rm wp-auto-config
 
@@ -38,5 +32,5 @@ clean: down
 	@rm -rf  mysql/* wordpress/* wordpress/.htaccess
 
 # Run wpcli in the terminal
-start-wpcli:
+run-wpcli:
 	docker-compose run --rm wpcli bash
