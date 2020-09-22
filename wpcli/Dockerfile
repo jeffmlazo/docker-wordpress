@@ -14,11 +14,6 @@ RUN chmod +x /wait
 ADD Makefile entrypoint.sh /scripts/
 RUN chmod +x /scripts/entrypoint.sh
 
-# Create folder & add access write permission for wpcli cache folder
-RUN mkdir /.wp-cli/ &&
-    mkdir /.wp-cli/cache/
-RUN chmod 777 -R /.wp-cli/
-
 ENTRYPOINT [ "/scripts/entrypoint.sh" ]
 USER 33:33
 CMD ["wp", "shell"]
