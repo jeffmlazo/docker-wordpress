@@ -30,6 +30,7 @@ autoinstall: build
 clean: down
 	@echo "💥 Removing related folders/files..."
 	@rm -rf  mysql/* wordpress/* wordpress/.htaccess
+	@echo "\n⚙️ Related folders/files has been removed..."
 
 # Run wpcli in the terminal
 run-wpcli:

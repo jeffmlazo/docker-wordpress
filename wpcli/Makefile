@@ -93,3 +93,5 @@ endif
 
 	@echo -e "\n⚙️ Removing Wordpress default posts & pages..."
 	-wp post delete --force ${WORDPRESS_DEFAULT_POSTS_PAGES}
+
+	@echo -e "\n⚙️ WordPress Setup Done! You can now browse it using http://localhost...\n"

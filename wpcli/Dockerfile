@@ -14,6 +14,10 @@ RUN chmod +x /wait
 ADD Makefile entrypoint.sh /scripts/
 RUN chmod +x /scripts/entrypoint.sh
 
+# Create a cache folder for wp-cli and give ownership to user 33
+RUN mkdir -p /etc/X11/fs/.wp-cli/cache/
+RUN chown -R 33:33 /etc/X11/fs/.wp-cli/cache/
+
 ENTRYPOINT [ "/scripts/entrypoint.sh" ]
 USER 33:33
 CMD ["wp", "shell"]
