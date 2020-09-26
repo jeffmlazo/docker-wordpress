@@ -1,17 +1,32 @@
-The installation tool kit, provided here, include:
+### :star: Features
+
+- A containerize WordPress development environment using Docker
+- Automated setup of WodPress using Make commands for less dependent on using browsers
+- Multiple installation & activation of themes or plugins in local, wordpress repository or other valid repositories
+- Auto cleanup of default wordpress themes, plugins, posts & pages
+
+### :wrench: Installed tool kits
 
 - MariaDB/MySQL used for Wordpress database
 - Adminer database management system to connect to your MariaDB database
 - WP-Cli: Wordpress Command Line Interface
 - Makefile directives for automatization.
 
-### Requirements
+### :bangbang: Requirements
 
 - Chocolatey - for installing GNU Make in Windows machine
 - Docker
 - GNU Make
 
-### Installing GNU Make (Windows)
+### Installing Docker
+
+- Visit official website for installation below:
+
+  https://www.docker.com/
+
+### Installing GNU Make
+
+**Windows**
 
 1. Open **poweshell.exe** & run as an **administrator**.
 
