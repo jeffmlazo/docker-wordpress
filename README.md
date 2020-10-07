@@ -17,6 +17,7 @@
 - Chocolatey - for installing GNU Make in Windows machine
 - Docker
 - GNU Make
+- Git Bash
 
 ### Installing Docker
 
@@ -162,12 +163,13 @@ at <http://localhost:8080>.
 
 Default identification for your wordpress website admin:
 
-- `Username: wordpress` and
+- `Username: wordpress`
 - `Password: wordpress`
 
-Default identification for the phpMyAdmin interface:
+Default identification for the Adminer interface:
 
-- `Username: user` and
+- `Server: mariadb`
+- `Username: user`
 - `Password: password`
 
 ## **Useful set of commands to know**:
@@ -234,6 +236,8 @@ run-wpcli:
 
 ## References
 
+- Video Demos
+  - https://www.youtube.com/playlist?list=PLggK2qt2RzlDwQTrsP1kJwSYVNWRbrldo
 - [Github Fork From: KASSAMBARA](https://github.com/kassambara/wordpress-docker-compose)
 - [Docker Official Website](https://www.docker.com)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
