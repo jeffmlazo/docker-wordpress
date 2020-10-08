@@ -25,16 +25,6 @@ else ifneq ($(strip ${WORDPRESS_LOCAL_THEMES}),)
 # Check if repo theme is not empty
 else ifneq ($(strip ${WORDPRESS_REPO_THEMES}),)
 	wpThemes := ${WORDPRESS_REPO_THEMES}
-
-	# TODO: Figure out how to add --version flag for specific version
-	# Check if  theme version is not empty
-	# ifneq ($(strip ${WORDPRESS_REPO_THEMES_VERSION}),)
-	# 	wpThemes := $(foreach theme,$(wpThemes), 						\
-	# 		$(foreach themeVersion,${WORDPRESS_REPO_THEMES_VERSION}, 	\
-	# 			$(wpThemeDir)/${theme} --version="$(themeVersion)" 	\
-	# 		) 															\
-	# 	)
-	# endif
 endif
 
 ####### CHECKING LOCAL & REPO PLUGINS ######
