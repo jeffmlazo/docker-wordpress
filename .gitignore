@@ -12,3 +12,4 @@ logs/nginx/*
 !logs/nginx/.keep
 _trash
 *.Rproj
+node_modules

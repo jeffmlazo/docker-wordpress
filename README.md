@@ -4,13 +4,17 @@
 - Automated setup of WodPress using Make commands for less dependent on using browsers
 - Multiple installation & activation of themes or plugins in local, wordpress repository or other valid repositories
 - Auto cleanup of default wordpress themes, plugins, posts & pages
+- **(OPTIONAL)** Webpack build setup ready for development & production modes
+  - Auto reloading of the page for custom theme using Browsersync or Hot Module Replacement
+  - Bootstrap 4 framework setup ready
+  - Assets(js, css, fonts, image) optimization
 
 ### :wrench: Installed tool kits
 
-- MariaDB/MySQL used for Wordpress database
-- Adminer database management system to connect to your MariaDB database
-- WP-Cli: Wordpress Command Line Interface
-- Makefile directives for automatization.
+- MariaDB/MySQL - used for Wordpress database
+- Adminer - database management system to connect to your MariaDB database & it also an alternative for phpMyAdmin
+- WP-Cli: - Wordpress Command Line Interface
+- Makefile - directives for automatization.
 
 ### :bangbang: Requirements
 
@@ -18,6 +22,11 @@
 - Docker
 - GNU Make
 - Git Bash
+
+> **NOTE:** These tools are optional for using webpack bundler.
+
+- Node.js - for NPM
+- Webpack
 
 ### Installing Docker
 
@@ -147,6 +156,19 @@
    WORDPRESS_DEFAULT_PLUGINS="hello akismet"
    # Hello world! post & Sample & Privacy Policy page
    WORDPRESS_DEFAULT_POSTS_PAGES="1 2 3"
+
+   # 10/ For webpack setup variables
+   CUSTOM_THEME_FOLDER="underscore-custom-theme"
+   CUSTOM_THEME_DISTRIBUTION_FOLDER="dist"
+   CUSTOM_THEME_FONTS_FOLDER="fonts"
+   # These variables are only used in the root main Makefile
+   # Use only these if you're lazy to create a lot of default empty asset files for javascript or sass
+   CUSTOM_THEME_DIR="./wordpress/wp-content/themes/${CUSTOM_THEME_FOLDER}"
+   CUSTOM_THEME_SRC_DIR="${CUSTOM_THEME_DIR}/src"
+   CUSTOM_THEME_SRC_JS_DIR="${CUSTOM_THEME_SRC_DIR}/js"
+   CUSTOM_THEME_SRC_SASS_DIR="${CUSTOM_THEME_SRC_DIR}/sass"
+   CUSTOM_THEME_SRC_JS_FILES="app.js vendor.js"
+   CUSTOM_THEME_SRC_SASS_FILES="main.scss _vars.scss _customize-bootstrap.scss"
    ```
 
 4. Run the make command to build and start the installation.
@@ -158,8 +180,8 @@
 
 5. Done!
 
-Visit your site at <http://localhost> and your database via Adminer
-at <http://localhost:8080>.
+> Visit your site at <http://localhost> and your database via Adminer
+> at <http://localhost:8080>.
 
 Default identification for your wordpress website admin:
 
@@ -174,10 +196,10 @@ Default identification for the Adminer interface:
 
 ## **Useful set of commands to know**:
 
-### Docker-compose
+### Docker-compose Commands
 
 ```bash
-# Stop and remove containers
+# Stop current running containers
 docker-compose down
 
 # Build, and start the wordpress website
@@ -191,14 +213,17 @@ rm -rf certs/* certs-data/* logs/nginx/* mysql/* wordpress/*
 docker-compose run --rm wpcli bash
 ```
 
-### Makefile
+### Makefile Commands
 
-**NOTE:** You can use these makefile commands as an alternative for docker-compose commands. This will use the setup for wpcli options and you don't use the browser for installing wordpress.
+**NOTE:** You can use these makefile commands as an alternative for docker-compose commands. These will also be use in setup for wpcli options and you don't use the browser for installing wordpress.
 
 ```bash
 # Start the wordpress website
 start:
 	docker-compose up -d
+
+# Restart the container
+restart: down start
 
 # Build and start the wordpress website
 build:
@@ -208,7 +233,7 @@ build:
 healthcheck:
 	docker-compose run --rm healthcheck
 
-# Reset everything
+# Stop current running containers
 down:
 	docker-compose down
 
@@ -221,17 +246,48 @@ configure:
 
 # Build and start the wordpress website using wpcli configurations
 autoinstall: build
+	@echo "⚙️ Installing wordpress using wpcli..."
 	docker-compose -f docker-compose.yml -f wp-auto-config.yml run --rm wp-auto-config
 
 # Clean/Delete all installed wordpress & database setup
 clean: down
 	@echo "💥 Removing related folders/files..."
 	@rm -rf  mysql/* wordpress/* wordpress/.htaccess
+	@echo "\n⚙️ Related folders/files has been removed..."
 
 # Run wpcli in the terminal
 run-wpcli:
 	docker-compose run --rm wpcli bash
 
+# Remove all stopped containers
+remove-containers:
+	docker rm -f $(docker ps -aq)
+
+# Generate source files for custom theme
+gen-src:
+	@echo -e "⚙️ Generating source files...\n"
+ifdef srcDirs
+	@mkdir -pv $(srcDirs)
+endif
+ifdef jsFiles
+	touch $(jsFiles)
+endif
+ifdef sassFiles
+	touch $(sassFiles)
+endif
+	@echo -e "\n⚙️ Source files have been generated..."
+```
+
+### NPM Commands
+
+> This will automatically opens <http://localhost:3000> as you're front page if you used webpack.
+
+```bash
+# Start the webpack dev server & open the default browser
+npm start
+
+# Build a distribution assets for custom theme
+npm run build
 ```
 
 ## References
@@ -242,3 +298,5 @@ run-wpcli:
 - [Docker Official Website](https://www.docker.com)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Chocolatey Official Website](https://chocolatey.org/)
+- [Webpack Official Website](https://webpack.js.org/)
+- [Node.js Official Website](https://nodejs.org)

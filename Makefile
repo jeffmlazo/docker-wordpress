@@ -1,6 +1,30 @@
+include .env
+
+##############################
+#	CONDITIONAL STATEMENTS	
+##############################
+# Replace all " to empty to remove it using subst
+wpCustomThemeDir = $(subst ",,${CUSTOM_THEME_DIR})
+wpCustomThemeSrcDir = $(subst ",,${CUSTOM_THEME_SRC_DIR})
+wpCustomThemeSrcJsDir = $(subst ",,${CUSTOM_THEME_SRC_JS_DIR})
+wpCustomThemeSrcSassDir = $(subst ",,${CUSTOM_THEME_SRC_SASS_DIR})
+srcDirs = $(wpCustomThemeDir) $(wpCustomThemeSrcDir) $(wpCustomThemeSrcJsDir) $(wpCustomThemeSrcSassDir)
+wpCustomThemeJsFiles = $(subst ",,${CUSTOM_THEME_SRC_JS_FILES})
+wpCustomThemeSassFiles = $(subst ",,${CUSTOM_THEME_SRC_SASS_FILES})
+# Loop all js files then assign it with the js source path directory
+jsFiles := $(foreach jsFile,$(wpCustomThemeJsFiles),$(wpCustomThemeSrcJsDir)/$(jsFile))
+# Loop all js files then assign it with the js source path directory
+sassFiles := $(foreach sassFile,$(wpCustomThemeSassFiles),$(wpCustomThemeSrcSassDir)/$(sassFile))
+
+#################
+#	COMMANDS	
+#################
 # Start the wordpress website
 start:
 	docker-compose up -d
+
+# Restart the container
+restart: down start
 
 # Build and start the wordpress website
 build:
@@ -10,7 +34,7 @@ build:
 healthcheck:
 	docker-compose run --rm healthcheck
 
-# Reset everything
+# Stop current running containers
 down:
 	docker-compose down
 
@@ -35,3 +59,21 @@ clean: down
 # Run wpcli in the terminal
 run-wpcli:
 	docker-compose run --rm wpcli bash
+
+# Remove all stopped containers
+remove-containers:
+	docker rm -f $(docker ps -aq) 
+
+# Generate source files for custom theme
+gen-src:
+	@echo -e "⚙️ Generating source files...\n"
+ifdef srcDirs
+	@mkdir -pv $(srcDirs)
+endif
+ifdef jsFiles
+	touch $(jsFiles)
+endif
+ifdef sassFiles
+	touch $(sassFiles)
+endif
+	@echo -e "\n⚙️ Source files have been generated..."
