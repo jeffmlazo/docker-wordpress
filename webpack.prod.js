@@ -15,13 +15,19 @@ module.exports = merge(common, {
   },
   optimization: {
     minimizer: [
-      new OptimizeCssAssetsWebpackPlugin(),
-      new TerserWebpackPlugin()
+      new OptimizeCssAssetsWebpackPlugin({
+        cssProcessor: require('cssnano'),
+        cssProcessorPluginOptions: {
+          preset: ['default', { discardComments: { removeAll: false } }],
+        },
+        canPrint: true
+      }),
+      new TerserWebpackPlugin(),
     ],
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "[name].[contentHash].css",
+      filename: "style.css",
     }),
   ],
   module: {
